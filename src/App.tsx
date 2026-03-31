@@ -531,7 +531,7 @@ function WorkCategory() {
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('portfolio');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [adminCategories, setAdminCategories] = useState(categories.filter(c => c.name !== 'Overview'));
+  const [adminCategories] = useState(categories.filter(c => c.name !== 'Overview'));
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
