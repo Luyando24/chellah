@@ -531,6 +531,7 @@ function WorkCategory() {
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('portfolio');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [adminCategories, setAdminCategories] = useState(categories.filter(c => c.name !== 'Overview'));
 
   return (
     <div className="min-h-screen bg-[#f8f8f8] flex font-sans">
@@ -551,6 +552,13 @@ function AdminDashboard() {
           >
             <ImageIcon />
             Portfolio
+          </button>
+          <button 
+            onClick={() => setActiveTab('categories')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${activeTab === 'categories' ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            <FolderIcon />
+            Categories
           </button>
           <button 
             onClick={() => setActiveTab('layout')}
@@ -579,64 +587,156 @@ function AdminDashboard() {
       {/* Main Content */}
       <main className="flex-1 ml-64 p-12">
         <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <h1 className="text-3xl font-light tracking-wide text-gray-900 mb-2">Portfolio Management</h1>
-              <p className="text-gray-500 text-sm">Upload and organize your photography collections.</p>
-            </div>
-            <button className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium">
-              <UploadIcon />
-              Upload Photos
-            </button>
-          </div>
-
-          {/* Filters */}
-          <div className="bg-white p-2 rounded-xl border border-gray-200 mb-8 inline-flex">
-            <button 
-              onClick={() => setSelectedCategory('all')}
-              className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === 'all' ? 'bg-gray-100 text-black' : 'text-gray-500 hover:text-black'}`}
-            >
-              All Work
-            </button>
-            {categories.filter(c => c.name !== 'Overview').map(cat => (
-              <button 
-                key={cat.path}
-                onClick={() => setSelectedCategory(cat.name)}
-                className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat.name ? 'bg-gray-100 text-black' : 'text-gray-500 hover:text-black'}`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-
-          {/* Image Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {images.map((img) => (
-              <div key={img.id} className="group relative aspect-[4/5] bg-gray-100 rounded-xl overflow-hidden border border-gray-200">
-                <img 
-                  src={img.url} 
-                  alt={img.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
-                  <div className="flex justify-end">
-                    <button className="p-2 bg-white/10 hover:bg-red-500 text-white rounded-lg backdrop-blur-sm transition-colors">
-                      <TrashIcon />
-                    </button>
-                  </div>
-                  <div>
-                    <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-md mb-2">
-                      Fashion
-                    </span>
-                    <p className="text-white text-sm font-medium truncate">{img.title}</p>
-                  </div>
+          {activeTab === 'portfolio' && (
+            <>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-12">
+                <div>
+                  <h1 className="text-3xl font-light tracking-wide text-gray-900 mb-2">Portfolio Management</h1>
+                  <p className="text-gray-500 text-sm">Upload and organize your photography collections.</p>
                 </div>
+                <button className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium">
+                  <UploadIcon />
+                  Upload Photos
+                </button>
               </div>
-            ))}
-          </div>
+
+              {/* Filters */}
+              <div className="bg-white p-2 rounded-xl border border-gray-200 mb-8 inline-flex flex-wrap gap-2">
+                <button 
+                  onClick={() => setSelectedCategory('all')}
+                  className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === 'all' ? 'bg-gray-100 text-black' : 'text-gray-500 hover:text-black'}`}
+                >
+                  All Work
+                </button>
+                {adminCategories.map(cat => (
+                  <button 
+                    key={cat.path}
+                    onClick={() => setSelectedCategory(cat.name)}
+                    className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${selectedCategory === cat.name ? 'bg-gray-100 text-black' : 'text-gray-500 hover:text-black'}`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Image Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {images.map((img) => (
+                  <div key={img.id} className="group relative aspect-[4/5] bg-gray-100 rounded-xl overflow-hidden border border-gray-200">
+                    <img 
+                      src={img.url} 
+                      alt={img.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
+                      <div className="flex justify-end gap-2">
+                        <button className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-lg backdrop-blur-sm transition-colors" title="Edit details">
+                          <EditIcon />
+                        </button>
+                        <button className="p-2 bg-white/10 hover:bg-red-500 text-white rounded-lg backdrop-blur-sm transition-colors" title="Delete image">
+                          <TrashIcon />
+                        </button>
+                      </div>
+                      <div>
+                        <span className="inline-block px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-md mb-2">
+                          Fashion
+                        </span>
+                        <p className="text-white text-sm font-medium truncate">{img.title}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {activeTab === 'categories' && (
+            <>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-12">
+                <div>
+                  <h1 className="text-3xl font-light tracking-wide text-gray-900 mb-2">Category Management</h1>
+                  <p className="text-gray-500 text-sm">Organize your portfolio into distinct collections.</p>
+                </div>
+                <button className="flex items-center gap-2 bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors text-sm font-medium">
+                  <PlusIcon />
+                  New Category
+                </button>
+              </div>
+
+              {/* Category List */}
+              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-gray-50 border-b border-gray-200 text-sm text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 font-medium">Category Name</th>
+                      <th className="px-6 py-4 font-medium">URL Path</th>
+                      <th className="px-6 py-4 font-medium">Images</th>
+                      <th className="px-6 py-4 font-medium text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {adminCategories.map((cat) => (
+                      <tr key={cat.path} className="hover:bg-gray-50 transition-colors group">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-gray-100 rounded-lg text-gray-500 group-hover:bg-white group-hover:shadow-sm transition-all">
+                              <FolderIcon />
+                            </div>
+                            <span className="font-medium text-gray-900">{cat.name}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-500">{cat.path}</td>
+                        <td className="px-6 py-4 text-sm text-gray-500">12 items</td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button className="p-2 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg transition-colors">
+                              <EditIcon />
+                            </button>
+                            <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                              <TrashIcon />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {adminCategories.length === 0 && (
+                  <div className="p-12 text-center text-gray-500">
+                    <div className="w-12 h-12 mx-auto mb-4 bg-gray-50 rounded-full flex items-center justify-center text-gray-400">
+                      <FolderIcon />
+                    </div>
+                    <p className="text-lg font-medium text-gray-900 mb-1">No categories found</p>
+                    <p>Create a category to start organizing your portfolio.</p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {activeTab === 'layout' && (
+            <div>
+              <h1 className="text-3xl font-light tracking-wide text-gray-900 mb-2">Page Layout</h1>
+              <p className="text-gray-500 text-sm mb-12">Configure the appearance of your public pages.</p>
+              <div className="bg-white p-8 rounded-xl border border-gray-200 text-center text-gray-500">
+                Layout settings will be implemented here.
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'settings' && (
+            <div>
+              <h1 className="text-3xl font-light tracking-wide text-gray-900 mb-2">Settings</h1>
+              <p className="text-gray-500 text-sm mb-12">Manage your account and website configuration.</p>
+              <div className="bg-white p-8 rounded-xl border border-gray-200 text-center text-gray-500">
+                General settings will be implemented here.
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
